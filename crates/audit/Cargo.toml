@@ -1,0 +1,15 @@
+[package]
+name = "duramen-audit"
+description = "Structured JSON-line audit logging for authorization decisions"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+duramen-engine = { path = "../engine" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
