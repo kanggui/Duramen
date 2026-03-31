@@ -313,6 +313,7 @@ To add new security concerns without modifying existing code:
 - [Benchmark Reports](docs/benchmark/) — sub-millisecond authorization performance analysis
 - [Test Coverage](docs/test-coverage.md) — 219 tests across all crates
 - [Adding Command Handlers](docs/adding-command-handlers.md) — guide for adding per-binary parsing logic
+- [Scenarios & Use Cases](docs/scenarios.md) — protecting against unintended agent behavior for individuals, teams, and organizations
 - [Adding a New Agent](docs/adding-a-new-agent.md) — step-by-step guide for supporting a new AI coding agent
 - [Copilot CLI Cedar Mapping](docs/copilot-cli-cedar-mapping.md) — how tool calls map to Cedar entities
 
