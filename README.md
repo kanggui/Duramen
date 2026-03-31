@@ -313,6 +313,7 @@ To add new security concerns without modifying existing code:
 - [Benchmark Reports](docs/benchmark/) — sub-millisecond authorization performance analysis
 - [Test Coverage](docs/test-coverage.md) — 219 tests across all crates
 - [Adding Command Handlers](docs/adding-command-handlers.md) — guide for adding per-binary parsing logic
+- [Adding a New Agent](docs/adding-a-new-agent.md) — step-by-step guide for supporting a new AI coding agent
 - [Copilot CLI Cedar Mapping](docs/copilot-cli-cedar-mapping.md) — how tool calls map to Cedar entities
 
 ## Contributing
@@ -325,7 +326,7 @@ Contributions are welcome! Here's how to get started:
 
 ### Extension points
 
-- **New agent support** — implement `AgentNormalizer` + `ResponseFormatter` ([guide](docs/adding-command-handlers.md))
+- **New agent support** — implement `AgentNormalizer` + `ResponseFormatter` ([guide](docs/adding-a-new-agent.md))
 - **New command handler** — implement `CommandHandler` for a specific binary ([guide](docs/adding-command-handlers.md))
 - **New security enricher** — implement `ResourceEnricher` or `ActionClassifier` in the enrichment pipeline
 - **New Cedar policies** — add `.cedar` files to `policies/examples/`
