@@ -1,0 +1,11 @@
+[package]
+name = "duramen-request-adaptor"
+description = "Agent-specific input normalization for authorization requests"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+duramen-engine = { path = "../engine" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }

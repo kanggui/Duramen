@@ -1,0 +1,10 @@
+[package]
+name = "duramen-response-formatter"
+description = "Agent-specific output formatting for authorization decisions"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+duramen-engine = { path = "../engine" }
+serde = { workspace = true }
+serde_json = { workspace = true }

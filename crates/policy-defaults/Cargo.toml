@@ -1,0 +1,5 @@
+[package]
+name = "duramen-policy-defaults"
+description = "Compile-time embedded default Cedar policies"
+version.workspace = true
+edition.workspace = true
