@@ -1,0 +1,135 @@
+entity Agent = {
+    trust_level?: String,
+    session_id?: String,
+    user?: String,
+};
+
+entity File = {
+    extension?: String,
+    directory?: String,
+    is_protected?: Bool,
+    is_destructive?: Bool,
+};
+
+entity Command = {
+    binary?: String,
+    args?: String,
+    is_destructive?: Bool,
+};
+
+entity Url = {
+    domain?: String,
+    is_destructive?: Bool,
+};
+
+entity GitRef = {
+    is_protected?: Bool,
+    is_destructive?: Bool,
+    is_elevated?: Bool,
+    remote?: String,
+};
+
+action "file:create" appliesTo {
+    principal: [Agent],
+    resource: [File],
+};
+
+action "file:read" appliesTo {
+    principal: [Agent],
+    resource: [File],
+};
+
+action "file:edit" appliesTo {
+    principal: [Agent],
+    resource: [File],
+};
+
+action "file:delete" appliesTo {
+    principal: [Agent],
+    resource: [File],
+};
+
+action "directory:list" appliesTo {
+    principal: [Agent],
+    resource: [File],
+};
+
+action "git:commit" appliesTo {
+    principal: [Agent],
+    resource: [GitRef],
+};
+
+action "git:push" appliesTo {
+    principal: [Agent],
+    resource: [GitRef],
+};
+
+action "git:force-push" appliesTo {
+    principal: [Agent],
+    resource: [GitRef],
+};
+
+action "git:branch" appliesTo {
+    principal: [Agent],
+    resource: [GitRef],
+};
+
+action "git:status" appliesTo {
+    principal: [Agent],
+    resource: [GitRef],
+};
+
+action "git:log" appliesTo {
+    principal: [Agent],
+    resource: [GitRef],
+};
+
+action "git:diff" appliesTo {
+    principal: [Agent],
+    resource: [GitRef],
+};
+
+action "network:fetch" appliesTo {
+    principal: [Agent],
+    resource: [Url],
+};
+
+action "git::read" appliesTo {
+    principal: [Agent],
+    resource: [GitRef],
+};
+
+action "git::write" appliesTo {
+    principal: [Agent],
+    resource: [GitRef],
+};
+
+action "git::network" appliesTo {
+    principal: [Agent],
+    resource: [GitRef],
+};
+
+action "git::destructive" appliesTo {
+    principal: [Agent],
+    resource: [GitRef],
+};
+
+action "shell:execute" appliesTo {
+    principal: [Agent],
+    resource: [Command, File],
+};
+
+action "network:request" appliesTo {
+    principal: [Agent],
+    resource: [Url],
+};
+
+action "tool:unknown" appliesTo {
+    principal: [Agent],
+    resource: [Command, File, Url],
+};
+
+action "package:install" appliesTo {
+    principal: [Agent],
+    resource: [Command, File],
+};
