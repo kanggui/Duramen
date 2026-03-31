@@ -1,0 +1,31 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/cli",
+    "crates/engine",
+    "crates/request-adaptor",
+    "crates/response-formatter",
+    "crates/audit",
+    "crates/policy-defaults",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Fine-grained authorization for AI coding agents, powered by Cedar"
+repository = "https://github.com/anthropics/duramen"
+
+[workspace.dependencies]
+cedar-policy = "4"
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1", features = ["v4"] }
+assert_cmd = "2"
+predicates = "3"
+tempfile = "3"
+criterion = { version = "0.5", features = ["html_reports"] }
+dirs-next = "2"

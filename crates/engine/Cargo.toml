@@ -1,0 +1,21 @@
+[package]
+name = "duramen-engine"
+description = "Core authorization engine with Cedar policy evaluation"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+cedar-policy = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+duramen-policy-defaults = { path = "../policy-defaults" }
+serde_json = { workspace = true }
+criterion = { workspace = true }
+
+[[bench]]
+name = "cedar_eval"
+harness = false
