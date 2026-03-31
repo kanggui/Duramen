@@ -314,6 +314,7 @@ To add new security concerns without modifying existing code:
 - [Test Coverage](docs/test-coverage.md) — 219 tests across all crates
 - [Adding Command Handlers](docs/adding-command-handlers.md) — guide for adding per-binary parsing logic
 - [Scenarios & Use Cases](docs/scenarios.md) — protecting against unintended agent behavior for individuals, teams, and organizations
+- [Agent Permission Integration](docs/agent-permission-integration.md) — how Duramen works alongside agent built-in controls like --yolo
 - [Adding a New Agent](docs/adding-a-new-agent.md) — step-by-step guide for supporting a new AI coding agent
 - [Copilot CLI Cedar Mapping](docs/copilot-cli-cedar-mapping.md) — how tool calls map to Cedar entities
 
