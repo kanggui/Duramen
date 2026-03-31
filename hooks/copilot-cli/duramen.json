@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "./.github/hooks/duramen-hook.sh",
+        "powershell": "./.github/hooks/duramen-hook.ps1",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}
