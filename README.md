@@ -112,6 +112,52 @@ duramen init
 #   require-approval-sensitive.cedar — requires approval for protected branches
 ```
 
+### Installing Policies
+
+Duramen loads policies from three locations. All are combined — Cedar's deny-overrides semantics mean a `forbid` at any level blocks the action.
+
+**Repo-level** (`.authz/` in your project — shared with the team):
+
+```bash
+# Generate defaults
+duramen init
+
+# Add a custom policy
+cat > .authz/no-network.cedar << 'EOF'
+forbid(principal, action == Action::"network:fetch", resource);
+EOF
+
+# Copy an example policy
+cp policies/examples/team-workflow.cedar .authz/
+
+# Commit policies with your code
+git add .authz/ && git commit -m "Add authorization policies"
+```
+
+**User-level** (`~/.config/duramen/policies` — applies to ALL your repos):
+
+```bash
+# Create user policy directory
+mkdir -p ~/.config/duramen/policies
+
+# Add personal policies that apply everywhere
+cat > ~/.config/duramen/policies/my-rules.cedar << 'EOF'
+@advice("require-approval")
+permit(principal, action == Action::"git:push", resource);
+EOF
+```
+
+**Built-in defaults** (compiled into the binary — always available, lowest priority):
+
+The 4 default policies ship with the binary. They apply even without `duramen init`. Run `duramen init` to copy them to `.authz/` for customization.
+
+### Validate policies
+
+```bash
+# Check policies parse correctly and match the Cedar schema
+duramen validate --policy-dir .authz/
+```
+
 ### Copilot CLI hook integration
 
 Use the install script to set up hooks in any repo:
