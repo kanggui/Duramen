@@ -35,6 +35,7 @@ const CI_PATTERNS: &[&str] = &[
     "azure-pipelines.yml",
 ];
 
+#[derive(Default)]
 pub struct PathSensitivityEnricher;
 
 impl PathSensitivityEnricher {

@@ -14,6 +14,7 @@ const DESTRUCTIVE_PATTERNS: &[&str] = &[
     ":(){ :|:& };:",
 ];
 
+#[derive(Default)]
 pub struct DestructiveClassifier;
 
 impl DestructiveClassifier {
@@ -64,7 +65,7 @@ mod tests {
     use super::*;
     use crate::pipeline::PipelineContext;
 
-    fn ctx_with_cmd(cmd: &str) -> PipelineContext {
+    fn ctx_with_cmd(cmd: &str) -> PipelineContext<'_> {
         PipelineContext {
             sub_command: cmd,
             full_command: cmd,

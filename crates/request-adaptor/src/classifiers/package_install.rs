@@ -15,6 +15,7 @@ const PACKAGE_MANAGERS: &[(&str, &[&str])] = &[
     ("go", &["install"]),
 ];
 
+#[derive(Default)]
 pub struct PackageInstallClassifier;
 
 impl PackageInstallClassifier {

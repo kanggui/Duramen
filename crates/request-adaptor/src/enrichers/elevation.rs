@@ -1,6 +1,7 @@
 use crate::pipeline::{PipelineContext, ResourceEnricher};
 use duramen_engine::entities::AuthzResource;
 
+#[derive(Default)]
 pub struct ElevationEnricher;
 
 impl ElevationEnricher {

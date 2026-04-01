@@ -140,11 +140,9 @@ fn split_chained_commands(command: &str) -> Vec<&str> {
     let bytes = command.as_bytes();
     let mut i = 0;
     while i < bytes.len() {
-        if bytes[i] == b'&' && i + 1 < bytes.len() && bytes[i + 1] == b'&' {
-            commands.push(command[start..i].trim());
-            i += 2;
-            start = i;
-        } else if bytes[i] == b'|' && i + 1 < bytes.len() && bytes[i + 1] == b'|' {
+        if (bytes[i] == b'&' && i + 1 < bytes.len() && bytes[i + 1] == b'&')
+            || (bytes[i] == b'|' && i + 1 < bytes.len() && bytes[i + 1] == b'|')
+        {
             commands.push(command[start..i].trim());
             i += 2;
             start = i;
@@ -280,16 +278,16 @@ impl CopilotCliNormalizer {
         let final_action = pipeline.process(&action, &mut res, &ctx);
 
         // For non-handler actions (generic shell commands), set is_destructive if not already set
-        if !final_action.starts_with("git::") && final_action != "file:delete" {
-            if res.attributes.get("is_destructive").is_none() {
-                if let Some(attrs) = res.attributes.as_object_mut() {
-                    attrs.insert(
-                        "is_destructive".into(),
-                        serde_json::Value::Bool(
-                            is_destructive(full_command) || is_destructive(sub_cmd),
-                        ),
-                    );
-                }
+        if !final_action.starts_with("git::") && final_action != "file:delete"
+            && res.attributes.get("is_destructive").is_none()
+        {
+            if let Some(attrs) = res.attributes.as_object_mut() {
+                attrs.insert(
+                    "is_destructive".into(),
+                    serde_json::Value::Bool(
+                        is_destructive(full_command) || is_destructive(sub_cmd),
+                    ),
+                );
             }
         }
 

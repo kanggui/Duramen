@@ -13,7 +13,7 @@ impl CommandHandler for GitCommandHandler {
         let remaining = if parts.len() > 1 { &parts[1..] } else { &[] };
 
         let has_force = remaining.iter().any(|a| *a == "--force" || *a == "-f");
-        let has_hard = remaining.iter().any(|a| *a == "--hard");
+        let has_hard = remaining.contains(&"--hard");
         let has_delete = remaining
             .iter()
             .any(|a| *a == "-D" || *a == "-d" || *a == "--delete");

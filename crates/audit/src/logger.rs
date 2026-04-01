@@ -42,6 +42,7 @@ pub struct AuditResource {
 }
 
 impl AuditEntry {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         request: &AuthzRequest,
         decision: DecisionTier,

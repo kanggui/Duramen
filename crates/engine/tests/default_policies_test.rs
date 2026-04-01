@@ -223,7 +223,7 @@ fn audit_file_writes_skips_protected() {
 fn deny_destructive_blocks_force_push() {
     let policy = format!(
         "{}\n{}",
-        duramen_policy_defaults::ALLOW_READ_ONLY,
+        duramen_policy_defaults::ALLOW_DEFAULT,
         duramen_policy_defaults::DENY_DESTRUCTIVE,
     );
     let engine = CedarEngine::from_policy_str(&policy).unwrap();

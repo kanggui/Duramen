@@ -1,6 +1,7 @@
 use crate::pipeline::{PipelineContext, ResourceEnricher};
 use duramen_engine::entities::{AuthzResource, ResourceType};
 
+#[derive(Default)]
 pub struct NetworkDomainEnricher;
 
 impl NetworkDomainEnricher {
