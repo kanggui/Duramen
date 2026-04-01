@@ -74,8 +74,13 @@ mod tests {
 
     fn ctx() -> PipelineContext<'static> {
         PipelineContext {
-            sub_command: "", full_command: "", binary: "", args: &[],
-            cwd: None, tool_name: "bash", is_elevated: false,
+            sub_command: "",
+            full_command: "",
+            binary: "",
+            args: &[],
+            cwd: None,
+            tool_name: "bash",
+            is_elevated: false,
         }
     }
 
@@ -85,7 +90,10 @@ mod tests {
         let mut resource = AuthzResource::file("/project/.env");
         resource.attributes = serde_json::json!({});
         enricher.enrich(&mut resource, &ctx());
-        assert_eq!(resource.attributes.get("is_protected").unwrap(), &serde_json::json!(true));
+        assert_eq!(
+            resource.attributes.get("is_protected").unwrap(),
+            &serde_json::json!(true)
+        );
     }
 
     #[test]
@@ -94,7 +102,10 @@ mod tests {
         let mut resource = AuthzResource::file("/home/user/.ssh/id_rsa");
         resource.attributes = serde_json::json!({});
         enricher.enrich(&mut resource, &ctx());
-        assert_eq!(resource.attributes.get("is_protected").unwrap(), &serde_json::json!(true));
+        assert_eq!(
+            resource.attributes.get("is_protected").unwrap(),
+            &serde_json::json!(true)
+        );
     }
 
     #[test]
@@ -103,7 +114,10 @@ mod tests {
         let mut resource = AuthzResource::file("/project/.github/workflows/ci.yml");
         resource.attributes = serde_json::json!({});
         enricher.enrich(&mut resource, &ctx());
-        assert_eq!(resource.attributes.get("is_protected").unwrap(), &serde_json::json!(true));
+        assert_eq!(
+            resource.attributes.get("is_protected").unwrap(),
+            &serde_json::json!(true)
+        );
     }
 
     #[test]
@@ -112,7 +126,10 @@ mod tests {
         let mut resource = AuthzResource::file("/project/Cargo.lock");
         resource.attributes = serde_json::json!({});
         enricher.enrich(&mut resource, &ctx());
-        assert_eq!(resource.attributes.get("is_protected").unwrap(), &serde_json::json!(true));
+        assert_eq!(
+            resource.attributes.get("is_protected").unwrap(),
+            &serde_json::json!(true)
+        );
     }
 
     #[test]

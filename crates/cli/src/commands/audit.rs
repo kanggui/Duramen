@@ -9,14 +9,12 @@ pub fn run(
     principal: Option<String>,
     limit: usize,
 ) -> i32 {
-    let path = log_path
-        .map(PathBuf::from)
-        .unwrap_or_else(|| {
-            dirs_next::home_dir()
-                .unwrap_or_else(|| PathBuf::from("."))
-                .join(".duramen")
-                .join("audit.log")
-        });
+    let path = log_path.map(PathBuf::from).unwrap_or_else(|| {
+        dirs_next::home_dir()
+            .unwrap_or_else(|| PathBuf::from("."))
+            .join(".duramen")
+            .join("audit.log")
+    });
 
     if !path.exists() {
         println!("[]");

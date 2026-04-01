@@ -4,8 +4,8 @@ use duramen_engine::decision::{AuthzDecision, DecisionTier};
 use duramen_engine::entities::*;
 use duramen_engine::evaluator::CedarEngine;
 use duramen_engine::policy::PolicyLoader;
-use duramen_response_formatter::get_formatter;
 use duramen_request_adaptor::get_normalizer;
+use duramen_response_formatter::get_formatter;
 use std::path::PathBuf;
 
 /// Decision tier priority for aggregation (higher = stricter).
@@ -95,10 +95,7 @@ pub fn run(
             "url" => AuthzResource::url(&resource_str),
             "gitref" => AuthzResource::git_ref(&resource_str),
             other => {
-                eprintln!(
-                    r#"{{"error":"unknown resource type: {}"}}"#,
-                    other
-                );
+                eprintln!(r#"{{"error":"unknown resource type: {}"}}"#, other);
                 return 3;
             }
         };
@@ -166,15 +163,12 @@ pub fn run(
     let engine = CedarEngine::from_policy_set(policy_set);
 
     // Evaluate each sub-request, track worst decision, log all non-Allow
-    let log_path = audit_log
-        .as_deref()
-        .map(PathBuf::from)
-        .unwrap_or_else(|| {
-            dirs_next::home_dir()
-                .unwrap_or_else(|| PathBuf::from("."))
-                .join(".duramen")
-                .join("audit.log")
-        });
+    let log_path = audit_log.as_deref().map(PathBuf::from).unwrap_or_else(|| {
+        dirs_next::home_dir()
+            .unwrap_or_else(|| PathBuf::from("."))
+            .join(".duramen")
+            .join("audit.log")
+    });
 
     let mut worst_decision: Option<AuthzDecision> = None;
     let mut worst_request: Option<&AuthzRequest> = None;
@@ -211,7 +205,9 @@ pub fn run(
         // Track the strictest decision
         let dominated = match &worst_decision {
             None => true,
-            Some(current) => decision_priority(decision.decision) > decision_priority(current.decision),
+            Some(current) => {
+                decision_priority(decision.decision) > decision_priority(current.decision)
+            }
         };
         if dominated {
             worst_decision = Some(decision.clone());

@@ -5,10 +5,16 @@ use tempfile::TempDir;
 #[test]
 fn validate_valid_policies() {
     let dir = TempDir::new().unwrap();
-    std::fs::write(dir.path().join("test.cedar"), r#"permit(principal, action, resource);"#).unwrap();
+    std::fs::write(
+        dir.path().join("test.cedar"),
+        r#"permit(principal, action, resource);"#,
+    )
+    .unwrap();
     let mut cmd = Command::cargo_bin("duramen").unwrap();
     cmd.args(["validate", "--policy-dir", dir.path().to_str().unwrap()]);
-    cmd.assert().success().stdout(predicate::str::contains("valid"));
+    cmd.assert()
+        .success()
+        .stdout(predicate::str::contains("valid"));
 }
 
 #[test]
@@ -23,7 +29,11 @@ fn validate_rejects_invalid_policies() {
 #[test]
 fn validate_missing_dir_exits_3() {
     let mut cmd = Command::cargo_bin("duramen").unwrap();
-    cmd.args(["validate", "--policy-dir", "/nonexistent/path/that/does/not/exist"]);
+    cmd.args([
+        "validate",
+        "--policy-dir",
+        "/nonexistent/path/that/does/not/exist",
+    ]);
     cmd.assert().code(3);
 }
 

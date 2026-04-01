@@ -23,6 +23,8 @@ cargo build --release
 
 ## What It Looks Like
 
+![Duramen blocking a destructive git reset --hard](docs/assets/demo-block-hard-reset.gif)
+
 When Copilot CLI tries a safe operation:
 ```
 ✓ Edit src/main.rs (edit)

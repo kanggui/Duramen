@@ -3,7 +3,11 @@ use clap::{Parser, Subcommand};
 mod commands;
 
 #[derive(Parser)]
-#[command(name = "duramen", version, about = "Fine-grained authorization for AI coding agents")]
+#[command(
+    name = "duramen",
+    version,
+    about = "Fine-grained authorization for AI coding agents"
+)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,

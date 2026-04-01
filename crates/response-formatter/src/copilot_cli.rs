@@ -46,9 +46,7 @@ impl ResponseFormatter for CopilotCliFormatter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use duramen_engine::entities::{
-        AgentPrincipal, AuthzAction, AuthzContext, AuthzResource,
-    };
+    use duramen_engine::entities::{AgentPrincipal, AuthzAction, AuthzContext, AuthzResource};
 
     fn sample_request() -> AuthzRequest {
         AuthzRequest {

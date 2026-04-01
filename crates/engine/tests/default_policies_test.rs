@@ -168,8 +168,7 @@ fn combined_allows_unknown_action() {
 
 #[test]
 fn allow_default_permits_everything() {
-    let engine =
-        CedarEngine::from_policy_str(duramen_policy_defaults::ALLOW_DEFAULT).unwrap();
+    let engine = CedarEngine::from_policy_str(duramen_policy_defaults::ALLOW_DEFAULT).unwrap();
 
     let req = make_request("file:read", AuthzResource::file("/src/main.rs"));
     let decision = engine.evaluate(&req).unwrap();
@@ -197,8 +196,7 @@ fn allow_read_only_alias_still_works() {
 
 #[test]
 fn audit_file_writes_produces_audit_tier() {
-    let engine =
-        CedarEngine::from_policy_str(duramen_policy_defaults::AUDIT_FILE_WRITES).unwrap();
+    let engine = CedarEngine::from_policy_str(duramen_policy_defaults::AUDIT_FILE_WRITES).unwrap();
 
     let req = make_request("file:edit", file_resource("/src/lib.rs", false));
     let decision = engine.evaluate(&req).unwrap();
@@ -207,8 +205,7 @@ fn audit_file_writes_produces_audit_tier() {
 
 #[test]
 fn audit_file_writes_skips_protected() {
-    let engine =
-        CedarEngine::from_policy_str(duramen_policy_defaults::AUDIT_FILE_WRITES).unwrap();
+    let engine = CedarEngine::from_policy_str(duramen_policy_defaults::AUDIT_FILE_WRITES).unwrap();
 
     let req = make_request("file:edit", file_resource("/.env", true));
     let decision = engine.evaluate(&req).unwrap();
@@ -248,10 +245,8 @@ fn deny_destructive_blocks_destructive_attribute() {
 
 #[test]
 fn require_approval_sensitive_on_protected_push() {
-    let engine = CedarEngine::from_policy_str(
-        duramen_policy_defaults::REQUIRE_APPROVAL_SENSITIVE,
-    )
-    .unwrap();
+    let engine =
+        CedarEngine::from_policy_str(duramen_policy_defaults::REQUIRE_APPROVAL_SENSITIVE).unwrap();
 
     let req = make_request("git:push", git_resource("main", true));
     let decision = engine.evaluate(&req).unwrap();
@@ -260,10 +255,8 @@ fn require_approval_sensitive_on_protected_push() {
 
 #[test]
 fn require_approval_sensitive_skips_unprotected() {
-    let engine = CedarEngine::from_policy_str(
-        duramen_policy_defaults::REQUIRE_APPROVAL_SENSITIVE,
-    )
-    .unwrap();
+    let engine =
+        CedarEngine::from_policy_str(duramen_policy_defaults::REQUIRE_APPROVAL_SENSITIVE).unwrap();
 
     let req = make_request("git:push", git_resource("feature-branch", false));
     let decision = engine.evaluate(&req).unwrap();
@@ -312,24 +305,19 @@ fn default_policies_validate_against_schema() {
         .map(|s| s.to_string())
         .collect::<Vec<_>>();
 
-    let engine = CedarEngine::from_policy_sources_with_schema(
-        &policies,
-        duramen_policy_defaults::SCHEMA,
-    )
-    .unwrap();
+    let engine =
+        CedarEngine::from_policy_sources_with_schema(&policies, duramen_policy_defaults::SCHEMA)
+            .unwrap();
 
     engine.validate_policies().unwrap();
 }
 
 #[test]
 fn schema_validation_rejects_invalid_policy() {
-    let bad_policy = vec![
-        r#"permit(principal, action == Action::"nonexistent:action", resource);"#.to_string(),
-    ];
-    let engine = CedarEngine::from_policy_sources_with_schema(
-        &bad_policy,
-        duramen_policy_defaults::SCHEMA,
-    )
-    .unwrap();
+    let bad_policy =
+        vec![r#"permit(principal, action == Action::"nonexistent:action", resource);"#.to_string()];
+    let engine =
+        CedarEngine::from_policy_sources_with_schema(&bad_policy, duramen_policy_defaults::SCHEMA)
+            .unwrap();
     assert!(engine.validate_policies().is_err());
 }

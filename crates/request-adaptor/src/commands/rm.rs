@@ -64,7 +64,10 @@ mod tests {
     #[test]
     fn rm_handler_marks_destructive() {
         let result = RmCommandHandler.parse(&["file.txt"], Some("/project"));
-        assert_eq!(result.resource.attributes.get("is_destructive").unwrap(), &serde_json::json!(true));
+        assert_eq!(
+            result.resource.attributes.get("is_destructive").unwrap(),
+            &serde_json::json!(true)
+        );
     }
 
     #[test]

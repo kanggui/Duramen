@@ -105,7 +105,8 @@ mod tests {
 
     #[test]
     fn git_handler_parses_push_force() {
-        let result = GitCommandHandler.parse(&["push", "--force", "origin", "main"], Some("/project"));
+        let result =
+            GitCommandHandler.parse(&["push", "--force", "origin", "main"], Some("/project"));
         assert_eq!(result.action, "git::destructive");
         assert_eq!(result.resource.resource_type, ResourceType::GitRef);
         assert_eq!(result.resource.id, "main");
@@ -197,7 +198,10 @@ mod tests {
         let result = GitCommandHandler.parse(&["push", "upstream", "feature-branch"], None);
         assert_eq!(result.action, "git::network");
         assert_eq!(result.resource.id, "feature-branch");
-        assert_eq!(result.resource.attributes.get("remote").unwrap(), &serde_json::json!("upstream"));
+        assert_eq!(
+            result.resource.attributes.get("remote").unwrap(),
+            &serde_json::json!("upstream")
+        );
     }
 
     #[test]

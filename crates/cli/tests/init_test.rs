@@ -8,12 +8,26 @@ fn init_creates_authz_directory() {
     let mut cmd = Command::cargo_bin("duramen").unwrap();
     cmd.current_dir(dir.path());
     cmd.arg("init");
-    cmd.assert().success().stdout(predicate::str::contains("initialized"));
-    
+    cmd.assert()
+        .success()
+        .stdout(predicate::str::contains("initialized"));
+
     // Verify files were created
-    assert!(dir.path().join(".authz").join("schema.cedarschema").exists());
-    assert!(dir.path().join(".authz").join("deny-destructive.cedar").exists());
-    assert!(dir.path().join(".authz").join("allow-default.cedar").exists());
+    assert!(dir
+        .path()
+        .join(".authz")
+        .join("schema.cedarschema")
+        .exists());
+    assert!(dir
+        .path()
+        .join(".authz")
+        .join("deny-destructive.cedar")
+        .exists());
+    assert!(dir
+        .path()
+        .join(".authz")
+        .join("allow-default.cedar")
+        .exists());
 }
 
 #[test]
@@ -31,7 +45,11 @@ fn init_is_idempotent() {
     cmd2.assert().code(1);
 
     // Files should still exist from first init
-    assert!(dir.path().join(".authz").join("schema.cedarschema").exists());
+    assert!(dir
+        .path()
+        .join(".authz")
+        .join("schema.cedarschema")
+        .exists());
 }
 
 #[test]

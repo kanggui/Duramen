@@ -62,14 +62,12 @@ impl CedarEngine {
         request: &AuthzRequest,
     ) -> Result<(Request, Entities), EngineError> {
         // Build UIDs
-        let principal_uid: EntityUid =
-            format!(r#"Agent::"{}""#, request.principal.agent_type)
-                .parse()
-                .map_err(|e| EngineError::Evaluation(format!("bad principal: {e}")))?;
-        let action_uid: EntityUid =
-            format!(r#"Action::"{}""#, request.action.name)
-                .parse()
-                .map_err(|e| EngineError::Evaluation(format!("bad action: {e}")))?;
+        let principal_uid: EntityUid = format!(r#"Agent::"{}""#, request.principal.agent_type)
+            .parse()
+            .map_err(|e| EngineError::Evaluation(format!("bad principal: {e}")))?;
+        let action_uid: EntityUid = format!(r#"Action::"{}""#, request.action.name)
+            .parse()
+            .map_err(|e| EngineError::Evaluation(format!("bad action: {e}")))?;
         let resource_type = match request.resource.resource_type {
             crate::entities::ResourceType::File => "File",
             crate::entities::ResourceType::Command => "Command",
@@ -77,41 +75,42 @@ impl CedarEngine {
             crate::entities::ResourceType::GitRef => "GitRef",
         };
         // Escape backslashes and strip embedded quotes for Cedar UID parsing
-        let sanitized_resource_id = request
-            .resource
-            .id
-            .replace('\\', "\\\\")
-            .replace('"', "");
-        let resource_uid: EntityUid =
-            format!(r#"{}::"{}""#, resource_type, sanitized_resource_id)
-                .parse()
-                .map_err(|e| EngineError::Evaluation(format!("bad resource: {e}")))?;
+        let sanitized_resource_id = request.resource.id.replace('\\', "\\\\").replace('"', "");
+        let resource_uid: EntityUid = format!(r#"{}::"{}""#, resource_type, sanitized_resource_id)
+            .parse()
+            .map_err(|e| EngineError::Evaluation(format!("bad resource: {e}")))?;
 
         // Build resource entity with attributes
         let resource_attrs = Self::json_to_cedar_attrs(&request.resource.attributes);
-        let resource_entity =
-            Entity::new(resource_uid.clone(), resource_attrs, HashSet::new())
-                .map_err(|e| EngineError::Evaluation(format!("resource entity error: {e}")))?;
+        let resource_entity = Entity::new(resource_uid.clone(), resource_attrs, HashSet::new())
+            .map_err(|e| EngineError::Evaluation(format!("resource entity error: {e}")))?;
 
         // Build principal entity with attributes from AgentPrincipal
         let mut principal_attrs: HashMap<String, RestrictedExpression> = HashMap::new();
         if let Some(ref trust) = request.principal.trust_level {
-            principal_attrs.insert("trust_level".into(), RestrictedExpression::new_string(trust.clone()));
+            principal_attrs.insert(
+                "trust_level".into(),
+                RestrictedExpression::new_string(trust.clone()),
+            );
         }
         if let Some(ref session) = request.principal.session_id {
-            principal_attrs.insert("session_id".into(), RestrictedExpression::new_string(session.clone()));
+            principal_attrs.insert(
+                "session_id".into(),
+                RestrictedExpression::new_string(session.clone()),
+            );
         }
         if let Some(ref user) = request.principal.user {
-            principal_attrs.insert("user".into(), RestrictedExpression::new_string(user.clone()));
+            principal_attrs.insert(
+                "user".into(),
+                RestrictedExpression::new_string(user.clone()),
+            );
         }
-        let principal_entity =
-            Entity::new(principal_uid.clone(), principal_attrs, HashSet::new())
-                .map_err(|e| EngineError::Evaluation(format!("principal entity error: {e}")))?;
+        let principal_entity = Entity::new(principal_uid.clone(), principal_attrs, HashSet::new())
+            .map_err(|e| EngineError::Evaluation(format!("principal entity error: {e}")))?;
 
         // Build entities store
-        let entities =
-            Entities::from_entities([principal_entity, resource_entity], None)
-                .map_err(|e| EngineError::Evaluation(format!("entities error: {e}")))?;
+        let entities = Entities::from_entities([principal_entity, resource_entity], None)
+            .map_err(|e| EngineError::Evaluation(format!("entities error: {e}")))?;
 
         // Build Cedar context from AuthzContext fields
         let mut context_map = serde_json::Map::new();
@@ -131,21 +130,15 @@ impl CedarEngine {
                 serde_json::Value::String(request.context.file_patterns_affected.join(",")),
             );
         }
-        let context = Context::from_json_value(
-            serde_json::Value::Object(context_map),
-            None,
-        )
-        .unwrap_or_else(|_| Context::empty());
-        let cedar_request =
-            Request::new(principal_uid, action_uid, resource_uid, context, None)
-                .map_err(|e| EngineError::Evaluation(format!("request build error: {e}")))?;
+        let context = Context::from_json_value(serde_json::Value::Object(context_map), None)
+            .unwrap_or_else(|_| Context::empty());
+        let cedar_request = Request::new(principal_uid, action_uid, resource_uid, context, None)
+            .map_err(|e| EngineError::Evaluation(format!("request build error: {e}")))?;
 
         Ok((cedar_request, entities))
     }
 
-    fn json_to_cedar_attrs(
-        attrs: &serde_json::Value,
-    ) -> HashMap<String, RestrictedExpression> {
+    fn json_to_cedar_attrs(attrs: &serde_json::Value) -> HashMap<String, RestrictedExpression> {
         let mut cedar_attrs = HashMap::new();
         if let Some(obj) = attrs.as_object() {
             for (key, value) in obj {
@@ -212,7 +205,11 @@ impl CedarEngine {
             }
         }
         (
-            response.diagnostics().reason().next().map(|id| id.to_string()),
+            response
+                .diagnostics()
+                .reason()
+                .next()
+                .map(|id| id.to_string()),
             None,
             None,
         )
@@ -238,8 +235,7 @@ impl PolicyEngine for CedarEngine {
             base_decision
         };
 
-        let (policy_id, policy_name, policy_description) =
-            self.extract_policy_metadata(&response);
+        let (policy_id, policy_name, policy_description) = self.extract_policy_metadata(&response);
 
         let reason = match final_decision {
             DecisionTier::Allow => "request allowed by policy".to_string(),
@@ -285,10 +281,7 @@ impl PolicyEngine for CedarEngine {
         if result.validation_passed() {
             Ok(())
         } else {
-            let errors: Vec<String> = result
-                .validation_errors()
-                .map(|e| e.to_string())
-                .collect();
+            let errors: Vec<String> = result.validation_errors().map(|e| e.to_string()).collect();
             Err(EngineError::Validation(errors.join("; ")))
         }
     }
@@ -315,10 +308,8 @@ mod tests {
 
     #[test]
     fn permits_when_policy_allows() {
-        let engine = CedarEngine::from_policy_str(
-            r#"permit(principal, action, resource);"#,
-        )
-        .unwrap();
+        let engine =
+            CedarEngine::from_policy_str(r#"permit(principal, action, resource);"#).unwrap();
         let decision = engine.evaluate(&make_request()).unwrap();
         assert!(decision.is_allowed());
         assert_eq!(decision.decision, DecisionTier::Allow);
@@ -368,10 +359,8 @@ mod tests {
 
     #[test]
     fn policy_name_is_none_without_annotation() {
-        let engine = CedarEngine::from_policy_str(
-            r#"permit(principal, action, resource);"#,
-        )
-        .unwrap();
+        let engine =
+            CedarEngine::from_policy_str(r#"permit(principal, action, resource);"#).unwrap();
         let decision = engine.evaluate(&make_request()).unwrap();
         assert_eq!(decision.decision, DecisionTier::Allow);
         assert!(decision.policy_name.is_none());
@@ -395,7 +384,9 @@ mod tests {
             decision.policy_name.as_deref(),
             Some("Require approval for sensitive ops")
         );
-        assert!(decision.reason.contains("Require approval for sensitive ops"));
+        assert!(decision
+            .reason
+            .contains("Require approval for sensitive ops"));
     }
 
     #[test]
@@ -419,8 +410,7 @@ mod tests {
                 extra: serde_json::Value::Null,
             },
         };
-        destructive_request.resource.attributes =
-            serde_json::json!({"is_destructive": true});
+        destructive_request.resource.attributes = serde_json::json!({"is_destructive": true});
 
         let decision = engine.evaluate(&destructive_request).unwrap();
         assert_eq!(
@@ -441,8 +431,7 @@ mod tests {
                 extra: serde_json::Value::Null,
             },
         };
-        safe_request.resource.attributes =
-            serde_json::json!({"is_destructive": false});
+        safe_request.resource.attributes = serde_json::json!({"is_destructive": false});
 
         let decision = engine.evaluate(&safe_request).unwrap();
         assert!(decision.is_allowed(), "safe command should be allowed");
@@ -466,9 +455,8 @@ mod tests {
     #[test]
     fn handles_non_boolean_resource_attributes() {
         // Attributes with unsupported types (null, arrays) are skipped gracefully
-        let engine = CedarEngine::from_policy_str(
-            r#"permit(principal, action, resource);"#,
-        ).unwrap();
+        let engine =
+            CedarEngine::from_policy_str(r#"permit(principal, action, resource);"#).unwrap();
 
         let mut request = make_request();
         request.resource.attributes = serde_json::json!({

@@ -29,9 +29,9 @@ impl PolicyLoader {
             let path = entry.path();
             if path.extension().is_some_and(|ext| ext == "cedar") {
                 let content = std::fs::read_to_string(&path).map_err(EngineError::Io)?;
-                content.parse::<cedar_policy::PolicySet>().map_err(|e| {
-                    EngineError::PolicyParse(format!("{}: {e}", path.display()))
-                })?;
+                content
+                    .parse::<cedar_policy::PolicySet>()
+                    .map_err(|e| EngineError::PolicyParse(format!("{}: {e}", path.display())))?;
                 policies.push(content);
             }
         }
@@ -112,7 +112,9 @@ mod tests {
     #[test]
     fn nonexistent_directory_returns_empty() {
         let loader = PolicyLoader::new();
-        let result = loader.load_from_dir(std::path::Path::new("/nonexistent/path")).unwrap();
+        let result = loader
+            .load_from_dir(std::path::Path::new("/nonexistent/path"))
+            .unwrap();
         assert!(result.is_empty());
     }
 
@@ -133,7 +135,9 @@ mod tests {
 
         let loader = PolicyLoader::new();
         let defaults = vec!["permit(principal, action, resource);"];
-        let result = loader.load_merged(Some(dir.path()), None, &defaults).unwrap();
+        let result = loader
+            .load_merged(Some(dir.path()), None, &defaults)
+            .unwrap();
         // Both default permit and repo forbid should be loaded
         assert!(result.policies().count() >= 2);
     }

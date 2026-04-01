@@ -6,8 +6,8 @@ pub struct GenericFormatter;
 
 impl ResponseFormatter for GenericFormatter {
     fn format(&self, decision: &AuthzDecision, _request: &AuthzRequest) -> FormattedResponse {
-        let stdout =
-            serde_json::to_string_pretty(decision).unwrap_or_else(|e| format!("{{\"error\": \"{e}\"}}"));
+        let stdout = serde_json::to_string_pretty(decision)
+            .unwrap_or_else(|e| format!("{{\"error\": \"{e}\"}}"));
         FormattedResponse {
             stdout,
             exit_code: decision.exit_code(),
@@ -23,9 +23,7 @@ impl ResponseFormatter for GenericFormatter {
 mod tests {
     use super::*;
     use duramen_engine::decision::DecisionTier;
-    use duramen_engine::entities::{
-        AgentPrincipal, AuthzAction, AuthzContext, AuthzResource,
-    };
+    use duramen_engine::entities::{AgentPrincipal, AuthzAction, AuthzContext, AuthzResource};
 
     fn sample_request() -> AuthzRequest {
         AuthzRequest {

@@ -1,5 +1,7 @@
+use crate::classifiers::{
+    destructive::DestructiveClassifier, package_install::PackageInstallClassifier,
+};
 use crate::commands::{self, default::DefaultCommandHandler, CommandHandler};
-use crate::classifiers::{destructive::DestructiveClassifier, package_install::PackageInstallClassifier};
 use crate::enrichers::{
     elevation::ElevationEnricher, file_metadata::FileMetadataEnricher,
     network_domain::NetworkDomainEnricher, path_sensitivity::PathSensitivityEnricher,
@@ -87,7 +89,11 @@ fn parse_single_command(command: &str, cwd: Option<&str>) -> (String, AuthzResou
     }
 
     let binary = cmd_parts.first().copied().unwrap_or("unknown");
-    let args = if cmd_parts.len() > 1 { &cmd_parts[1..] } else { &[] };
+    let args = if cmd_parts.len() > 1 {
+        &cmd_parts[1..]
+    } else {
+        &[]
+    };
 
     // Look up special handler, fall back to default
     let result = if let Some(handler) = commands::get_command_handler(binary) {
@@ -166,20 +172,14 @@ impl AgentNormalizer for CopilotCliNormalizer {
         let args = resolve_args(&raw_input.args);
         let cwd = raw_input.cwd.as_deref();
 
-        let working_directory = raw_input
-            .cwd
-            .clone()
-            .or_else(|| {
-                args.get("working_directory")
-                    .and_then(|v| v.as_str())
-                    .map(String::from)
-            });
+        let working_directory = raw_input.cwd.clone().or_else(|| {
+            args.get("working_directory")
+                .and_then(|v| v.as_str())
+                .map(String::from)
+        });
 
         if raw_input.tool == "powershell" || raw_input.tool == "bash" {
-            let command = args
-                .get("command")
-                .and_then(|v| v.as_str())
-                .unwrap_or("");
+            let command = args.get("command").and_then(|v| v.as_str()).unwrap_or("");
 
             let sub_commands = split_chained_commands(command);
             let mut requests = Vec::with_capacity(sub_commands.len());
@@ -278,7 +278,8 @@ impl CopilotCliNormalizer {
         let final_action = pipeline.process(&action, &mut res, &ctx);
 
         // For non-handler actions (generic shell commands), set is_destructive if not already set
-        if !final_action.starts_with("git::") && final_action != "file:delete"
+        if !final_action.starts_with("git::")
+            && final_action != "file:delete"
             && res.attributes.get("is_destructive").is_none()
         {
             if let Some(attrs) = res.attributes.as_object_mut() {
@@ -335,7 +336,10 @@ mod tests {
         assert_eq!(req.resource.id, "/home/user/project/main.rs");
         assert_eq!(req.principal.agent_type, "CopilotCLI");
         assert_eq!(req.context.tool_name, "edit");
-        assert_eq!(req.resource.attributes.get("is_protected").unwrap(), &json!(false));
+        assert_eq!(
+            req.resource.attributes.get("is_protected").unwrap(),
+            &json!(false)
+        );
     }
 
     #[test]
@@ -464,8 +468,14 @@ mod tests {
         assert_eq!(req.action.name, "git::network");
         assert_eq!(req.resource.resource_type, ResourceType::GitRef);
         assert_eq!(req.resource.id, "main");
-        assert_eq!(req.resource.attributes.get("remote").unwrap(), &json!("origin"));
-        assert_eq!(req.resource.attributes.get("is_destructive").unwrap(), &json!(false));
+        assert_eq!(
+            req.resource.attributes.get("remote").unwrap(),
+            &json!("origin")
+        );
+        assert_eq!(
+            req.resource.attributes.get("is_destructive").unwrap(),
+            &json!(false)
+        );
     }
 
     #[test]
@@ -480,8 +490,14 @@ mod tests {
         let req = &reqs[0];
         assert_eq!(req.action.name, "git::destructive");
         assert_eq!(req.resource.id, "main");
-        assert_eq!(req.resource.attributes.get("is_destructive").unwrap(), &json!(true));
-        assert_eq!(req.resource.attributes.get("remote").unwrap(), &json!("origin"));
+        assert_eq!(
+            req.resource.attributes.get("is_destructive").unwrap(),
+            &json!(true)
+        );
+        assert_eq!(
+            req.resource.attributes.get("remote").unwrap(),
+            &json!("origin")
+        );
     }
 
     #[test]
@@ -496,7 +512,10 @@ mod tests {
         let req = &reqs[0];
         assert_eq!(req.action.name, "git::destructive");
         assert_eq!(req.resource.id, "HEAD~3");
-        assert_eq!(req.resource.attributes.get("is_destructive").unwrap(), &json!(true));
+        assert_eq!(
+            req.resource.attributes.get("is_destructive").unwrap(),
+            &json!(true)
+        );
     }
 
     #[test]
@@ -524,7 +543,10 @@ mod tests {
         let reqs = CopilotCliNormalizer.normalize(&payload).unwrap();
         let req = &reqs[0];
         assert_eq!(req.action.name, "git::network");
-        assert_eq!(req.resource.attributes.get("is_elevated").unwrap(), &json!(true));
+        assert_eq!(
+            req.resource.attributes.get("is_elevated").unwrap(),
+            &json!(true)
+        );
     }
 
     #[test]
@@ -552,7 +574,10 @@ mod tests {
         let reqs = CopilotCliNormalizer.normalize(&payload).unwrap();
         let req = &reqs[0];
         assert_eq!(req.action.name, "git::network");
-        assert_eq!(req.resource.attributes.get("remote").unwrap(), &json!("origin"));
+        assert_eq!(
+            req.resource.attributes.get("remote").unwrap(),
+            &json!("origin")
+        );
     }
 
     #[test]
@@ -620,7 +645,10 @@ mod tests {
 
         assert_eq!(req.action.name, "shell:cargo");
         assert_eq!(req.resource.resource_type, ResourceType::File);
-        assert_eq!(req.context.working_directory, Some("/path/to/project".to_string()));
+        assert_eq!(
+            req.context.working_directory,
+            Some("/path/to/project".to_string())
+        );
     }
 
     #[test]
@@ -635,8 +663,14 @@ mod tests {
         assert_eq!(req.action.name, "file:delete");
         assert_eq!(req.resource.resource_type, ResourceType::File);
         assert_eq!(req.resource.id, "/");
-        assert_eq!(req.resource.attributes.get("is_destructive").unwrap(), &json!(true));
-        assert_eq!(req.resource.attributes.get("is_elevated").unwrap(), &json!(true));
+        assert_eq!(
+            req.resource.attributes.get("is_destructive").unwrap(),
+            &json!(true)
+        );
+        assert_eq!(
+            req.resource.attributes.get("is_elevated").unwrap(),
+            &json!(true)
+        );
     }
 
     #[test]
@@ -650,7 +684,10 @@ mod tests {
 
         assert_eq!(req.action.name, "file:edit");
         assert_eq!(req.resource.id, "/src/main.rs");
-        assert_eq!(req.resource.attributes.get("is_protected").unwrap(), &json!(false));
+        assert_eq!(
+            req.resource.attributes.get("is_protected").unwrap(),
+            &json!(false)
+        );
     }
 
     #[test]
@@ -723,7 +760,10 @@ mod tests {
         };
         let reqs = CopilotCliNormalizer.normalize(&payload).unwrap();
         let req = &reqs[0];
-        assert_eq!(req.resource.attributes.get("is_destructive").unwrap(), &json!(true));
+        assert_eq!(
+            req.resource.attributes.get("is_destructive").unwrap(),
+            &json!(true)
+        );
     }
 
     #[test]
@@ -736,7 +776,10 @@ mod tests {
         };
         let reqs = CopilotCliNormalizer.normalize(&payload).unwrap();
         let req = &reqs[0];
-        assert_eq!(req.resource.attributes.get("is_destructive").unwrap(), &json!(true));
+        assert_eq!(
+            req.resource.attributes.get("is_destructive").unwrap(),
+            &json!(true)
+        );
     }
 
     #[test]
@@ -899,8 +942,10 @@ mod tests {
         let reqs = CopilotCliNormalizer.normalize(&payload).unwrap();
         assert_eq!(reqs.len(), 2);
         assert_eq!(reqs[0].action.name, "git::read");
-        assert_eq!(reqs[1].action.name, "git::destructive",
-            "chained command with destructive sub-command should be classified as destructive");
+        assert_eq!(
+            reqs[1].action.name, "git::destructive",
+            "chained command with destructive sub-command should be classified as destructive"
+        );
     }
 
     #[test]
@@ -927,7 +972,10 @@ mod tests {
         };
         let reqs = CopilotCliNormalizer.normalize(&payload).unwrap();
         assert_eq!(reqs.len(), 2);
-        assert_eq!(reqs[1].resource.attributes.get("is_destructive").unwrap(), &json!(true));
+        assert_eq!(
+            reqs[1].resource.attributes.get("is_destructive").unwrap(),
+            &json!(true)
+        );
     }
 
     #[test]
@@ -980,8 +1028,10 @@ mod tests {
         };
         let reqs = CopilotCliNormalizer.normalize(&payload).unwrap();
         assert_eq!(reqs.len(), 5);
-        assert_eq!(reqs[2].action.name, "git::destructive",
-            "real Copilot pattern hiding destructive in chain should be caught");
+        assert_eq!(
+            reqs[2].action.name, "git::destructive",
+            "real Copilot pattern hiding destructive in chain should be caught"
+        );
     }
 
     #[test]
@@ -1029,7 +1079,11 @@ mod tests {
             timestamp: None,
         };
         let reqs = CopilotCliNormalizer.normalize(&payload).unwrap();
-        assert_eq!(reqs.len(), 3, "should produce 3 AuthzRequests for 3 sub-commands");
+        assert_eq!(
+            reqs.len(),
+            3,
+            "should produce 3 AuthzRequests for 3 sub-commands"
+        );
     }
 
     #[test]
@@ -1042,6 +1096,10 @@ mod tests {
             timestamp: None,
         };
         let reqs = CopilotCliNormalizer.normalize(&payload).unwrap();
-        assert_eq!(reqs.len(), 1, "pipe should not split into multiple requests");
+        assert_eq!(
+            reqs.len(),
+            1,
+            "pipe should not split into multiple requests"
+        );
     }
 }

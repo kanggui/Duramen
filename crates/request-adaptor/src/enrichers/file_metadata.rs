@@ -64,8 +64,13 @@ mod tests {
 
     fn ctx() -> PipelineContext<'static> {
         PipelineContext {
-            sub_command: "", full_command: "", binary: "", args: &[],
-            cwd: None, tool_name: "bash", is_elevated: false,
+            sub_command: "",
+            full_command: "",
+            binary: "",
+            args: &[],
+            cwd: None,
+            tool_name: "bash",
+            is_elevated: false,
         }
     }
 

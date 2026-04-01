@@ -1,6 +1,6 @@
+use chrono::Utc;
 use duramen_engine::decision::DecisionTier;
 use duramen_engine::entities::AuthzRequest;
-use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use std::fs::{self, OpenOptions};
 use std::io::Write;
@@ -96,8 +96,7 @@ impl AuditLogger {
     }
 
     pub fn log(&self, entry: &AuditEntry) -> Result<(), std::io::Error> {
-        let json = serde_json::to_string(entry)
-            .map_err(std::io::Error::other)?;
+        let json = serde_json::to_string(entry).map_err(std::io::Error::other)?;
         let mut file = OpenOptions::new()
             .create(true)
             .append(true)

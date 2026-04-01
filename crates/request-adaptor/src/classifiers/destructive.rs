@@ -82,6 +82,9 @@ mod tests {
         let classifier = DestructiveClassifier::new();
         let resource = AuthzResource::file("/");
         let result = classifier.classify("shell:rm", &resource, &ctx_with_cmd("rm -rf /"));
-        assert!(result.is_none(), "destructive classifier sets attributes, not actions");
+        assert!(
+            result.is_none(),
+            "destructive classifier sets attributes, not actions"
+        );
     }
 }

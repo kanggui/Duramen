@@ -38,10 +38,7 @@ impl CommandHandler for DefaultCommandHandler {
             AuthzResource::file(dir)
         };
 
-        CommandParseResult {
-            action,
-            resource,
-        }
+        CommandParseResult { action, resource }
     }
 }
 

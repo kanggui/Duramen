@@ -34,9 +34,13 @@ mod tests {
     fn sets_elevated_when_sudo() {
         let enricher = ElevationEnricher::new();
         let ctx = PipelineContext {
-            sub_command: "cargo build", full_command: "sudo cargo build",
-            binary: "cargo", args: &["build"],
-            cwd: None, tool_name: "bash", is_elevated: true,
+            sub_command: "cargo build",
+            full_command: "sudo cargo build",
+            binary: "cargo",
+            args: &["build"],
+            cwd: None,
+            tool_name: "bash",
+            is_elevated: true,
         };
         let mut resource = AuthzResource::file("/project");
         resource.attributes = serde_json::json!({});
@@ -48,9 +52,13 @@ mod tests {
     fn sets_false_when_not_elevated() {
         let enricher = ElevationEnricher::new();
         let ctx = PipelineContext {
-            sub_command: "cargo build", full_command: "cargo build",
-            binary: "cargo", args: &["build"],
-            cwd: None, tool_name: "bash", is_elevated: false,
+            sub_command: "cargo build",
+            full_command: "cargo build",
+            binary: "cargo",
+            args: &["build"],
+            cwd: None,
+            tool_name: "bash",
+            is_elevated: false,
         };
         let mut resource = AuthzResource::file("/project");
         resource.attributes = serde_json::json!({});

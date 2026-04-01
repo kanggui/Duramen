@@ -23,10 +23,7 @@ impl ResourceEnricher for NetworkDomainEnricher {
         if let Some(domain) = extract_domain(&resource.id) {
             if let Some(attrs) = resource.attributes.as_object_mut() {
                 if !attrs.contains_key("domain") {
-                    attrs.insert(
-                        "domain".into(),
-                        serde_json::Value::String(domain),
-                    );
+                    attrs.insert("domain".into(), serde_json::Value::String(domain));
                 }
             }
         }
@@ -53,8 +50,13 @@ mod tests {
 
     fn ctx() -> PipelineContext<'static> {
         PipelineContext {
-            sub_command: "", full_command: "", binary: "", args: &[],
-            cwd: None, tool_name: "bash", is_elevated: false,
+            sub_command: "",
+            full_command: "",
+            binary: "",
+            args: &[],
+            cwd: None,
+            tool_name: "bash",
+            is_elevated: false,
         }
     }
 

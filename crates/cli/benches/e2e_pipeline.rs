@@ -157,10 +157,9 @@ fn bench_formatter_only(c: &mut Criterion) {
     let copilot_fmt = get_formatter("copilot-cli").unwrap();
     let generic_fmt = get_formatter("generic").unwrap();
 
-    let payload: RawHookPayload = serde_json::from_str(
-        r#"{"tool":"view","args":{"path":"/src/main.rs"},"cwd":"/project"}"#,
-    )
-    .unwrap();
+    let payload: RawHookPayload =
+        serde_json::from_str(r#"{"tool":"view","args":{"path":"/src/main.rs"},"cwd":"/project"}"#)
+            .unwrap();
     let reqs = normalizer.normalize(&payload).unwrap();
     let decision = engine.evaluate(&reqs[0]).unwrap();
 
@@ -177,5 +176,10 @@ fn bench_formatter_only(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, bench_e2e_pipeline, bench_normalizer_only, bench_formatter_only);
+criterion_group!(
+    benches,
+    bench_e2e_pipeline,
+    bench_normalizer_only,
+    bench_formatter_only
+);
 criterion_main!(benches);

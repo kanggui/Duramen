@@ -4,8 +4,17 @@ use predicates::prelude::*;
 #[test]
 fn check_allows_file_read() {
     let mut cmd = Command::cargo_bin("duramen").unwrap();
-    cmd.args(["check", "--principal", "CopilotCLI", "--action", "file:read",
-              "--resource", "/src/main.rs", "--resource-type", "file"]);
+    cmd.args([
+        "check",
+        "--principal",
+        "CopilotCLI",
+        "--action",
+        "file:read",
+        "--resource",
+        "/src/main.rs",
+        "--resource-type",
+        "file",
+    ]);
     cmd.assert()
         .success()
         .stdout(predicate::str::contains("allow").or(predicate::str::contains("audit")));
@@ -14,8 +23,17 @@ fn check_allows_file_read() {
 #[test]
 fn check_denies_force_push() {
     let mut cmd = Command::cargo_bin("duramen").unwrap();
-    cmd.args(["check", "--principal", "CopilotCLI", "--action", "git:force-push",
-              "--resource", "main", "--resource-type", "gitref"]);
+    cmd.args([
+        "check",
+        "--principal",
+        "CopilotCLI",
+        "--action",
+        "git:force-push",
+        "--resource",
+        "main",
+        "--resource-type",
+        "gitref",
+    ]);
     cmd.assert()
         .code(1)
         .stdout(predicate::str::contains("deny"));
@@ -49,10 +67,14 @@ fn check_exits_3_on_invalid_resource_type() {
     let mut cmd = Command::cargo_bin("duramen").unwrap();
     cmd.args([
         "check",
-        "--principal", "test",
-        "--action", "file:read",
-        "--resource", "/test",
-        "--resource-type", "bogus",
+        "--principal",
+        "test",
+        "--action",
+        "file:read",
+        "--resource",
+        "/test",
+        "--resource-type",
+        "bogus",
     ]);
     cmd.assert().code(3);
 }

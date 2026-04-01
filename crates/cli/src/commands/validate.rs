@@ -6,7 +6,10 @@ use std::path::Path;
 pub fn run(policy_dir: &str) -> i32 {
     let dir = Path::new(policy_dir);
     if !dir.exists() {
-        eprintln!(r#"{{"error":"policy directory not found: {}"}}"#, policy_dir);
+        eprintln!(
+            r#"{{"error":"policy directory not found: {}"}}"#,
+            policy_dir
+        );
         return 3;
     }
     let loader = PolicyLoader::new();
@@ -38,10 +41,7 @@ pub fn run(policy_dir: &str) -> i32 {
 
     match engine.validate_policies() {
         Ok(()) => {
-            println!(
-                r#"{{"status":"valid","policy_count":{}}}"#,
-                policies.len()
-            );
+            println!(r#"{{"status":"valid","policy_count":{}}}"#, policies.len());
             0
         }
         Err(e) => {

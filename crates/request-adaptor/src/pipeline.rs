@@ -87,7 +87,9 @@ mod tests {
 
     struct TestEnricher;
     impl ResourceEnricher for TestEnricher {
-        fn name(&self) -> &str { "test" }
+        fn name(&self) -> &str {
+            "test"
+        }
         fn enrich(&self, resource: &mut AuthzResource, _ctx: &PipelineContext) {
             if let Some(attrs) = resource.attributes.as_object_mut() {
                 attrs.insert("enriched".into(), serde_json::Value::Bool(true));
@@ -97,8 +99,15 @@ mod tests {
 
     struct TestClassifier;
     impl ActionClassifier for TestClassifier {
-        fn name(&self) -> &str { "test" }
-        fn classify(&self, action: &str, resource: &AuthzResource, _ctx: &PipelineContext) -> Option<String> {
+        fn name(&self) -> &str {
+            "test"
+        }
+        fn classify(
+            &self,
+            action: &str,
+            resource: &AuthzResource,
+            _ctx: &PipelineContext,
+        ) -> Option<String> {
             if resource.attributes.get("enriched") == Some(&serde_json::Value::Bool(true)) {
                 Some(format!("{action}:enriched"))
             } else {
@@ -130,7 +139,10 @@ mod tests {
         let action = pipeline.process("shell:test", &mut resource, &test_ctx());
 
         assert_eq!(action, "shell:test:enriched");
-        assert_eq!(resource.attributes.get("enriched").unwrap(), &serde_json::Value::Bool(true));
+        assert_eq!(
+            resource.attributes.get("enriched").unwrap(),
+            &serde_json::Value::Bool(true)
+        );
     }
 
     #[test]

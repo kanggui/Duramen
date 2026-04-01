@@ -94,8 +94,14 @@ mod tests {
 
     #[test]
     fn decision_tier_from_str() {
-        assert_eq!(DecisionTier::from_str("allow").unwrap(), DecisionTier::Allow);
-        assert_eq!(DecisionTier::from_str("audit").unwrap(), DecisionTier::Audit);
+        assert_eq!(
+            DecisionTier::from_str("allow").unwrap(),
+            DecisionTier::Allow
+        );
+        assert_eq!(
+            DecisionTier::from_str("audit").unwrap(),
+            DecisionTier::Audit
+        );
         assert_eq!(
             DecisionTier::from_str("require-approval").unwrap(),
             DecisionTier::RequireApproval

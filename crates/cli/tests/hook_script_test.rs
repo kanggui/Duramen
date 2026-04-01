@@ -10,18 +10,26 @@ use std::process::Command;
 
 fn hook_script_path() -> String {
     let manifest = env!("CARGO_MANIFEST_DIR");
-    format!("{}\\..\\..\\hooks\\copilot-cli\\duramen-hook.ps1", manifest)
-        .replace('/', "\\")
+    format!("{}\\..\\..\\hooks\\copilot-cli\\duramen-hook.ps1", manifest).replace('/', "\\")
 }
 
 fn run_hook(payload: &str) -> (i32, String) {
     let output = Command::new("powershell")
         .args([
-            "-ExecutionPolicy", "Bypass",
+            "-ExecutionPolicy",
+            "Bypass",
             "-NoProfile",
-            "-File", &hook_script_path(),
+            "-File",
+            &hook_script_path(),
         ])
-        .env("PATH", format!("{}\\..\\..\\target\\debug;{}", env!("CARGO_MANIFEST_DIR"), std::env::var("PATH").unwrap_or_default()))
+        .env(
+            "PATH",
+            format!(
+                "{}\\..\\..\\target\\debug;{}",
+                env!("CARGO_MANIFEST_DIR"),
+                std::env::var("PATH").unwrap_or_default()
+            ),
+        )
         .stdin(std::process::Stdio::piped())
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::piped())
@@ -47,14 +55,16 @@ fn parse_hook_response(stdout: &str) -> serde_json::Value {
 
 #[test]
 fn hook_allows_file_read() {
-    let (_, stdout) = run_hook(r#"{"tool":"view","args":{"path":"/src/main.rs"},"cwd":"/project"}"#);
+    let (_, stdout) =
+        run_hook(r#"{"tool":"view","args":{"path":"/src/main.rs"},"cwd":"/project"}"#);
     let response = parse_hook_response(&stdout);
     assert_eq!(response["permissionDecision"], "allow");
 }
 
 #[test]
 fn hook_allows_safe_shell_command() {
-    let (_, stdout) = run_hook(r#"{"tool":"bash","args":{"command":"cargo build"},"cwd":"/project"}"#);
+    let (_, stdout) =
+        run_hook(r#"{"tool":"bash","args":{"command":"cargo build"},"cwd":"/project"}"#);
     let response = parse_hook_response(&stdout);
     assert_eq!(response["permissionDecision"], "allow");
 }
@@ -91,9 +101,7 @@ fn hook_denies_destructive_command_with_reason() {
 
 #[test]
 fn hook_denies_rm_rf_with_reason() {
-    let (_, stdout) = run_hook(
-        r#"{"tool":"bash","args":{"command":"rm -rf /"},"cwd":"/project"}"#,
-    );
+    let (_, stdout) = run_hook(r#"{"tool":"bash","args":{"command":"rm -rf /"},"cwd":"/project"}"#);
     let response = parse_hook_response(&stdout);
     assert_eq!(response["permissionDecision"], "deny");
     let reason = response["permissionDecisionReason"].as_str().unwrap_or("");
@@ -108,7 +116,10 @@ fn hook_denies_chained_destructive_with_reason() {
     let response = parse_hook_response(&stdout);
     assert_eq!(response["permissionDecision"], "deny");
     let reason = response["permissionDecisionReason"].as_str().unwrap_or("");
-    assert!(!reason.is_empty(), "reason must not be empty on deny for chained commands");
+    assert!(
+        !reason.is_empty(),
+        "reason must not be empty on deny for chained commands"
+    );
 }
 
 #[test]
@@ -124,9 +135,7 @@ fn hook_response_is_valid_json() {
 
 #[test]
 fn hook_allows_file_edit() {
-    let (_, stdout) = run_hook(
-        r#"{"tool":"edit","args":{"path":"/src/lib.rs"},"cwd":"/project"}"#,
-    );
+    let (_, stdout) = run_hook(r#"{"tool":"edit","args":{"path":"/src/lib.rs"},"cwd":"/project"}"#);
     let response = parse_hook_response(&stdout);
     // File edits are audited (allow + log), hook should return "allow"
     assert_eq!(response["permissionDecision"], "allow");
@@ -134,9 +143,8 @@ fn hook_allows_file_edit() {
 
 #[test]
 fn hook_allows_git_status() {
-    let (_, stdout) = run_hook(
-        r#"{"tool":"bash","args":{"command":"git status"},"cwd":"/project"}"#,
-    );
+    let (_, stdout) =
+        run_hook(r#"{"tool":"bash","args":{"command":"git status"},"cwd":"/project"}"#);
     let response = parse_hook_response(&stdout);
     assert_eq!(response["permissionDecision"], "allow");
 }
@@ -160,8 +168,14 @@ fn hook_real_copilot_format_deny_with_reason() {
     let response = parse_hook_response(&stdout);
     assert_eq!(response["permissionDecision"], "deny");
     let reason = response["permissionDecisionReason"].as_str().unwrap_or("");
-    assert!(!reason.is_empty(), "real Copilot format must return reason on deny");
-    assert!(reason.contains("denied") || reason.contains("Deny"), "reason: {reason}");
+    assert!(
+        !reason.is_empty(),
+        "real Copilot format must return reason on deny"
+    );
+    assert!(
+        reason.contains("denied") || reason.contains("Deny"),
+        "reason: {reason}"
+    );
 }
 
 #[test]

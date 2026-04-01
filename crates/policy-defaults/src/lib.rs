@@ -2,8 +2,7 @@ pub const SCHEMA: &str = include_str!("../../../policies/default/schema.cedarsch
 pub const ALLOW_DEFAULT: &str = include_str!("../../../policies/default/allow-default.cedar");
 pub const AUDIT_FILE_WRITES: &str =
     include_str!("../../../policies/default/audit-file-writes.cedar");
-pub const DENY_DESTRUCTIVE: &str =
-    include_str!("../../../policies/default/deny-destructive.cedar");
+pub const DENY_DESTRUCTIVE: &str = include_str!("../../../policies/default/deny-destructive.cedar");
 pub const REQUIRE_APPROVAL_SENSITIVE: &str =
     include_str!("../../../policies/default/require-approval-sensitive.cedar");
 

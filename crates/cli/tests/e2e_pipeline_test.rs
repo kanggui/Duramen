@@ -18,7 +18,9 @@ fn e2e_file_read_allowed() {
 fn e2e_file_edit_audited() {
     let mut cmd = Command::cargo_bin("duramen").unwrap();
     cmd.args(["check", "--agent", "copilot-cli"]);
-    cmd.write_stdin(r#"{"tool":"edit","args":{"path":"/src/lib.rs","old_str":"foo","new_str":"bar"}}"#);
+    cmd.write_stdin(
+        r#"{"tool":"edit","args":{"path":"/src/lib.rs","old_str":"foo","new_str":"bar"}}"#,
+    );
     cmd.assert()
         .success()
         .stdout(predicate::str::contains(r#""allowed": true"#));
@@ -54,8 +56,17 @@ fn e2e_force_push_denied() {
     // Force-push via git:force-push action requires the generic path.
     // This tests the CLI with explicit args to verify force-push denial.
     let mut cmd = Command::cargo_bin("duramen").unwrap();
-    cmd.args(["check", "--principal", "CopilotCLI", "--action", "git:force-push",
-              "--resource", "main", "--resource-type", "gitref"]);
+    cmd.args([
+        "check",
+        "--principal",
+        "CopilotCLI",
+        "--action",
+        "git:force-push",
+        "--resource",
+        "main",
+        "--resource-type",
+        "gitref",
+    ]);
     cmd.assert()
         .code(1)
         .stdout(predicate::str::contains(r#""deny""#));
@@ -88,7 +99,9 @@ fn e2e_grep_allowed() {
 fn e2e_create_file_audited() {
     let mut cmd = Command::cargo_bin("duramen").unwrap();
     cmd.args(["check", "--agent", "copilot-cli"]);
-    cmd.write_stdin(r#"{"tool":"create","args":{"path":"/src/new.rs","file_text":"fn main() {}"}}"#);
+    cmd.write_stdin(
+        r#"{"tool":"create","args":{"path":"/src/new.rs","file_text":"fn main() {}"}}"#,
+    );
     cmd.assert()
         .success()
         .stdout(predicate::str::contains(r#""allowed": true"#));
@@ -118,7 +131,10 @@ fn e2e_copilot_response_format_complete() {
     // Verify all expected fields exist
     assert!(parsed.get("allowed").is_some(), "missing 'allowed' field");
     assert!(parsed.get("message").is_some(), "missing 'message' field");
-    assert!(parsed.get("should_prompt_user").is_some(), "missing 'should_prompt_user' field");
+    assert!(
+        parsed.get("should_prompt_user").is_some(),
+        "missing 'should_prompt_user' field"
+    );
 }
 
 /// Full pipeline with REAL Copilot CLI payload format (toolName + toolArgs as JSON string)
@@ -187,8 +203,9 @@ fn e2e_empty_stdin_exits_3() {
 #[test]
 fn e2e_git_pull_through_normalizer() {
     let mut cmd = Command::cargo_bin("duramen").unwrap();
-    cmd.args(["check", "--agent", "copilot-cli"])
-        .write_stdin(r#"{"tool":"bash","args":{"command":"git pull origin main"},"cwd":"/project"}"#);
+    cmd.args(["check", "--agent", "copilot-cli"]).write_stdin(
+        r#"{"tool":"bash","args":{"command":"git pull origin main"},"cwd":"/project"}"#,
+    );
     // git pull is git::network — allowed by default permit
     cmd.assert().success();
 }
@@ -222,12 +239,19 @@ fn e2e_git_clean_fd_denied() {
 #[test]
 fn e2e_response_includes_policy_metadata() {
     let mut cmd = Command::cargo_bin("duramen").unwrap();
-    cmd.args(["check", "--agent", "copilot-cli"])
-        .write_stdin(r#"{"tool":"bash","args":{"command":"git push --force origin main"},"cwd":"/project"}"#);
+    cmd.args(["check", "--agent", "copilot-cli"]).write_stdin(
+        r#"{"tool":"bash","args":{"command":"git push --force origin main"},"cwd":"/project"}"#,
+    );
     let output = cmd.output().unwrap();
     let stdout = String::from_utf8_lossy(&output.stdout);
     let parsed: serde_json::Value = serde_json::from_str(stdout.trim()).unwrap();
     assert_eq!(parsed["allowed"], false);
-    assert!(parsed["policy_name"].as_str().is_some(), "deny response must include policy_name");
-    assert!(parsed["policy_description"].as_str().is_some(), "deny response must include policy_description");
+    assert!(
+        parsed["policy_name"].as_str().is_some(),
+        "deny response must include policy_name"
+    );
+    assert!(
+        parsed["policy_description"].as_str().is_some(),
+        "deny response must include policy_description"
+    );
 }

@@ -12,10 +12,7 @@ pub fn run() -> i32 {
         return 3;
     }
     let defaults = [
-        (
-            "schema.cedarschema",
-            duramen_policy_defaults::SCHEMA,
-        ),
+        ("schema.cedarschema", duramen_policy_defaults::SCHEMA),
         (
             "allow-default.cedar",
             duramen_policy_defaults::ALLOW_DEFAULT,
