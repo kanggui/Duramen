@@ -379,8 +379,12 @@ Contributions are welcome! Here's how to get started:
 - **New security enricher** — implement `ResourceEnricher` or `ActionClassifier` in the enrichment pipeline
 - **New Cedar policies** — add `.cedar` files to `policies/examples/`
 
-See [.github/copilot-instructions.md](.github/copilot-instructions.md) for architecture and conventions.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, code style, and PR process.
+
+## Security
+
+Found a vulnerability? Please see [SECURITY.md](SECURITY.md) for responsible disclosure.
 
 ## License
 
-MIT
+[MIT](LICENSE)
