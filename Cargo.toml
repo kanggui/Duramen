@@ -14,7 +14,7 @@ version = "0.1.0"
 edition = "2021"
 license = "MIT"
 description = "Fine-grained authorization for AI coding agents, powered by Cedar"
-repository = "https://github.com/anthropics/duramen"
+repository = "https://github.com/kanggui/Duramen"
 
 [workspace.dependencies]
 cedar-policy = "4"
