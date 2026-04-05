@@ -2,6 +2,13 @@
 # duramen pre-tool-use hook for Copilot CLI
 # Reads tool call payload from stdin, evaluates via duramen, returns permission decision.
 
+# Verify that jq exists and has not been tampered with before running the script.
+# A missing or malformed jq command could lead to a silent bypass of the policy engine.
+if ! command -v jq >/dev/null 2>&1; then
+  echo '{"permissionDecision":"deny","permissionDecisionReason":"Duramen hook: jq not found (fail-closed)"}'
+  exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Use local binary if present, otherwise fall back to PATH
