@@ -9,13 +9,7 @@ use duramen_engine::entities::{AuthzResource, ResourceType};
 /// - Keys and certificates (.pem, id_rsa)
 /// - IDE and Secret Managers (.vscode/settings.json, vault-token)
 /// - Infrastructure state files (*.tfstate)
-
-const SENSITIVE_PATTERNS: &[&str] = &[
-    ".env",
-    "secrets",
-    ".secret",
-    "credentials",
-];
+const SENSITIVE_PATTERNS: &[&str] = &[".env", "secrets", ".secret", "credentials"];
 
 const KEY_PATTERNS: &[&str] = &[
     ".pem",
@@ -28,12 +22,7 @@ const KEY_PATTERNS: &[&str] = &[
     ".gnupg/",
 ];
 
-const CLOUD_CONFIG_PATTERNS: &[&str] = &[
-    ".aws/",
-    ".azure/",
-    ".gcloud/",
-    ".kube/",
-];
+const CLOUD_CONFIG_PATTERNS: &[&str] = &[".aws/", ".azure/", ".gcloud/", ".kube/"];
 
 const AUTH_TOKEN_PATTERNS: &[&str] = &[
     ".npmrc",
@@ -48,16 +37,9 @@ const AUTH_TOKEN_PATTERNS: &[&str] = &[
     ".my.cnf",
 ];
 
-const HISTORY_PATTERNS: &[&str] = &[
-    ".bash_history",
-    ".zsh_history",
-    ".node_repl_history",
-];
+const HISTORY_PATTERNS: &[&str] = &[".bash_history", ".zsh_history", ".node_repl_history"];
 
-const IDE_PATTERNS: &[&str] = &[
-    ".vscode/settings.json",
-    ".idea/",
-];
+const IDE_PATTERNS: &[&str] = &[".vscode/settings.json", ".idea/"];
 
 const CI_PATTERNS: &[&str] = &[
     ".github/workflows/",
@@ -111,16 +93,30 @@ impl ResourceEnricher for PathSensitivityEnricher {
 
         let path = resource.id.to_lowercase();
 
-        let contains_sensitive = SENSITIVE_PATTERNS.iter().any(|p| path.contains(&p.to_lowercase()))
-            || KEY_PATTERNS.iter().any(|p| path.contains(&p.to_lowercase()))
-            || CLOUD_CONFIG_PATTERNS.iter().any(|p| path.contains(&p.to_lowercase()))
-            || AUTH_TOKEN_PATTERNS.iter().any(|p| path.contains(&p.to_lowercase()))
-            || HISTORY_PATTERNS.iter().any(|p| path.contains(&p.to_lowercase()))
-            || IDE_PATTERNS.iter().any(|p| path.contains(&p.to_lowercase()))
+        let contains_sensitive = SENSITIVE_PATTERNS
+            .iter()
+            .any(|p| path.contains(&p.to_lowercase()))
+            || KEY_PATTERNS
+                .iter()
+                .any(|p| path.contains(&p.to_lowercase()))
+            || CLOUD_CONFIG_PATTERNS
+                .iter()
+                .any(|p| path.contains(&p.to_lowercase()))
+            || AUTH_TOKEN_PATTERNS
+                .iter()
+                .any(|p| path.contains(&p.to_lowercase()))
+            || HISTORY_PATTERNS
+                .iter()
+                .any(|p| path.contains(&p.to_lowercase()))
+            || IDE_PATTERNS
+                .iter()
+                .any(|p| path.contains(&p.to_lowercase()))
             || CI_PATTERNS.iter().any(|p| path.contains(&p.to_lowercase()));
 
         let ends_with_sensitive = LOCK_FILES.iter().any(|f| path.ends_with(&f.to_lowercase()))
-            || SENSITIVE_EXTENSIONS.iter().any(|e| path.ends_with(&e.to_lowercase()));
+            || SENSITIVE_EXTENSIONS
+                .iter()
+                .any(|e| path.ends_with(&e.to_lowercase()));
 
         if contains_sensitive || ends_with_sensitive {
             if let Some(attrs) = resource.attributes.as_object_mut() {
@@ -155,7 +151,8 @@ mod tests {
         assert_eq!(
             resource.attributes.get("is_protected").unwrap(),
             &serde_json::json!(true),
-            "Failed to protect: {}", path
+            "Failed to protect: {}",
+            path
         );
     }
 
@@ -166,7 +163,8 @@ mod tests {
         enricher.enrich(&mut resource, &ctx());
         assert!(
             resource.attributes.get("is_protected").is_none(),
-            "Incorrectly protected: {}", path
+            "Incorrectly protected: {}",
+            path
         );
     }
 
